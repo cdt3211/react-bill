@@ -21,7 +21,7 @@ const { setBillList } = billStore.actions
 // 异步修改
 const getBillList =() => {
     return async (dispatch) => {
-        const res = axios.get('http://localhost:8888/ka')
+        const res = await axios.get('http://localhost:8888/ka')
         dispatch(setBillList(res.data))
     }
 }

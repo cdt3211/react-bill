@@ -1,23 +1,31 @@
 import { NavBar, DatePicker } from 'antd-mobile'
 import './index.scss'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
+import { useSelector } from 'react-redux'
+import _ from 'lodash'
 
 const Month = () => {
-    //弹窗打开关闭
-    const [dateVisible,setDateVisible] = useState(false)
-    //控制时间显示
-    const [currentDate, setCurrentDate] = useState(()=>{
-        return dayjs(new Date()).format('YYYY-MM')
-    })
-    //时间选择器确认
-    const onConfirm = (date)=>{
-        setDateVisible(false)
-        console.log(date)
-        const formateDate = dayjs(date).format('YYYY-MM')
-        setCurrentDate(formateDate)
-    }
+  //按月数据分组
+  const billList = useSelector(state => state.bill.billList)
+  const MonthGroup = useMemo(()=>{
+    return _.groupBy(billList,(item)=> dayjs(item.date).format('YYYY-MM'))
+  },[billList])
+  console.log(MonthGroup)
+  //弹窗打开关闭
+  const [dateVisible,setDateVisible] = useState(false)
+  //控制时间显示
+  const [currentDate, setCurrentDate] = useState(()=>{
+      return dayjs(new Date()).format('YYYY-MM')
+  })
+  //时间选择器确认
+  const onConfirm = (date)=>{
+      setDateVisible(false)
+      console.log(date)
+      const formateDate = dayjs(date).format('YYYY-MM')
+      setCurrentDate(formateDate)
+  }
   return (
     <div className="monthlyBill">
       <NavBar className="nav" backArrow={false}>
