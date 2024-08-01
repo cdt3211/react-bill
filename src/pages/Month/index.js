@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import _ from 'lodash'
+import DayBill from './components/DayBill'
 
 const Month = () => {
   //按月数据分组
@@ -32,9 +33,8 @@ const Month = () => {
   },[currentMonthList])
 
   useEffect(()=>{
-    const nowDate = dayjs(new Date()).format('YYYY-MM')
-    if(monthGroup[nowDate]){
-      setCurrentMonthList(monthGroup[nowDate])
+    if(monthGroup[currentDate]){
+      setCurrentMonthList(monthGroup[currentDate])
     }
   },[monthGroup])
 
@@ -45,6 +45,17 @@ const Month = () => {
       setCurrentMonthList(monthGroup[formateDate])
       setCurrentDate(formateDate)
   }
+
+  //当前月按照日分组
+  const dayGroup = useMemo(()=>{
+    const groupDate = _.groupBy(currentMonthList,(item)=> dayjs(item.date).format('YYYY-MM-DD'))
+    const keys = Object.keys(groupDate)
+    return {
+      keys,
+      groupDate
+    }
+  },[currentMonthList])
+  console.log(dayGroup)
 
   return (
     <div className="monthlyBill">
@@ -87,6 +98,14 @@ const Month = () => {
             max={new Date()}
           />
         </div>
+        {/* 单日列表统计 */}
+        {
+          dayGroup.keys.map(key=>{
+            return (
+              <DayBill key={key} date={key} billList={dayGroup.groupDate[key]} />
+            )
+          })
+        }
       </div>
     </div >
   )
