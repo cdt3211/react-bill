@@ -4,9 +4,32 @@ import './index.scss'
 import classNames from 'classnames'
 import { billListData } from '@/contents'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { addBillList } from '@/store/modules/billStore'
+import { useDispatch } from 'react-redux'
 
 const New = () => {
   const navigate = useNavigate()
+  //控制支出收入状态
+  const [billType, setBillType] = useState('pay') //pay-支出，income-收入
+
+  const [money, setMoney] = useState(0) 
+  const moneyChange = (value) => {
+    setMoney(value)
+  }
+  const [useFor, setUseFor] = useState('') //用途
+  const dispatch = useDispatch()
+  //保存账单
+  const saveBill = () => {
+    const data = {
+        type: billType,
+        money: billType === 'pay' ? -money : +money,
+        date: new Date(),
+        useFor: useFor
+    }
+    console.log(data)
+    dispatch(addBillList(data))
+  }
   return (
     <div className="keepAccounts">
       <NavBar className="nav" onBack={() => navigate(-1)}>
@@ -17,13 +40,15 @@ const New = () => {
         <div className="kaType">
           <Button
             shape="rounded"
-            className={classNames('selected')}
+            className={classNames(billType === 'pay' ? 'selected' : '')}
+            onClick={() => setBillType('pay')}
           >
             支出
           </Button>
           <Button
-            className={classNames('')}
+            className={classNames(billType === 'income' ? 'selected' : '')}
             shape="rounded"
+            onClick={() => setBillType('income')}
           >
             收入
           </Button>
@@ -45,6 +70,8 @@ const New = () => {
                 className="input"
                 placeholder="0.00"
                 type="number"
+                value={money}
+                onChange={moneyChange}
               />
               <span className="iconYuan">¥</span>
             </div>
@@ -53,7 +80,8 @@ const New = () => {
       </div>
 
       <div className="kaTypeList">
-        {billListData['pay'].map(item => {
+        {/* 数据区域 */}
+        {billListData[billType].map(item => {
           return (
             <div className="kaType" key={item.type}>
               <div className="title">{item.name}</div>
@@ -63,9 +91,10 @@ const New = () => {
                     <div
                       className={classNames(
                         'item',
-                        ''
+                        useFor === item.type ? 'selected' : ''
                       )}
                       key={item.type}
+                      onClick={()=>setUseFor(item.type)}
 
                     >
                       <div className="icon">
@@ -82,7 +111,7 @@ const New = () => {
       </div>
 
       <div className="btns">
-        <Button className="btn save">
+        <Button className="btn save" onClick={saveBill}>
           保 存
         </Button>
       </div>

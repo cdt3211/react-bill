@@ -104,6 +104,27 @@
       "date": "2024-08-28T16:00:00.000Z",
       "useFor": "salary",
       "id": 22
+    },
+    {
+      "id": "be75",
+      "type": "pay",
+      "money": -100,
+      "date": "2024-08-01T09:20:00.197Z",
+      "useFor": "dessert"
+    },
+    {
+      "id": "7a29",
+      "type": "income",
+      "money": 500,
+      "date": "2024-08-01T09:20:13.078Z",
+      "useFor": "bonus"
+    },
+    {
+      "id": "e7ca",
+      "type": "pay",
+      "money": -4000,
+      "date": "2024-08-01T09:25:44.666Z",
+      "useFor": "food"
     }
   ]
 }
