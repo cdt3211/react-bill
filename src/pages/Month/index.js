@@ -1,6 +1,6 @@
 import { NavBar, DatePicker } from 'antd-mobile'
 import './index.scss'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
@@ -9,23 +9,43 @@ import _ from 'lodash'
 const Month = () => {
   //按月数据分组
   const billList = useSelector(state => state.bill.billList)
-  const MonthGroup = useMemo(()=>{
+  const monthGroup = useMemo(()=>{
     return _.groupBy(billList,(item)=> dayjs(item.date).format('YYYY-MM'))
   },[billList])
-  console.log(MonthGroup)
   //弹窗打开关闭
   const [dateVisible,setDateVisible] = useState(false)
   //控制时间显示
   const [currentDate, setCurrentDate] = useState(()=>{
       return dayjs(new Date()).format('YYYY-MM')
   })
+  const [currentMonthList,setCurrentMonthList] = useState([])
+
+  const monthResult = useMemo(()=>{
+    //支出 / 收入 / 结余
+    const pay = currentMonthList.filter(item => item.type === 'pay').reduce((total, item) => total + item.money, 0)
+    const income = currentMonthList.filter(item => item.type === 'income').reduce((total, item) => total + item.money, 0)
+    return {
+      pay,
+      income,
+      total: pay + income
+    }
+  },[currentMonthList])
+
+  useEffect(()=>{
+    const nowDate = dayjs(new Date()).format('YYYY-MM')
+    if(monthGroup[nowDate]){
+      setCurrentMonthList(monthGroup[nowDate])
+    }
+  },[monthGroup])
+
   //时间选择器确认
   const onConfirm = (date)=>{
       setDateVisible(false)
-      console.log(date)
       const formateDate = dayjs(date).format('YYYY-MM')
+      setCurrentMonthList(monthGroup[formateDate])
       setCurrentDate(formateDate)
   }
+
   return (
     <div className="monthlyBill">
       <NavBar className="nav" backArrow={false}>
@@ -43,15 +63,15 @@ const Month = () => {
           {/* 统计区域 */}
           <div className='twoLineOverview'>
             <div className="item">
-              <span className="money">{100}</span>
+              <span className="money">{monthResult.pay.toFixed(2)}</span>
               <span className="type">支出</span>
             </div>
             <div className="item">
-              <span className="money">{200}</span>
+              <span className="money">{monthResult.income.toFixed(2)}</span>
               <span className="type">收入</span>
             </div>
             <div className="item">
-              <span className="money">{200}</span>
+              <span className="money">{monthResult.total.toFixed(2)}</span>
               <span className="type">结余</span>
             </div>
           </div>
