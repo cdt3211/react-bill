@@ -1,3 +1,4 @@
+import sum from '@/test';
 
 function App() {
   return (
