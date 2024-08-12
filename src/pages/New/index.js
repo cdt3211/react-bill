@@ -30,6 +30,14 @@ const New = () => {
     console.log(data)
     dispatch(addBillList(data))
   }
+
+  //时间选择
+    const [dateVisible, setDateVisible] = useState(false)
+    const dateConfirm = (value)=>{
+        setDateVisible(false)
+        console.log(value)
+    }
+
   return (
     <div className="keepAccounts">
       <NavBar className="nav" onBack={() => navigate(-1)}>
@@ -58,11 +66,15 @@ const New = () => {
           <div className="kaForm">
             <div className="date">
               <Icon type="calendar" className="icon" />
-              <span className="text">{'今天'}</span>
+              <span className="text" onClick={()=> setDateVisible(true)}>{'今天'}</span>
+              {/* 时间选择器 */}
               <DatePicker
                 className="kaDate"
                 title="记账日期"
                 max={new Date()}
+                visible={dateVisible}
+                onCancel={() => setDateVisible(false)}
+                onConfirm={(date) => {dateConfirm}}
               />
             </div>
             <div className="kaInput">
